@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class UiCell : MonoBehaviour , IDeselectHandler
 {
+    public CellInfo info;
     public TextMeshProUGUI id;
     public TextMeshProUGUI clientName;
     public TextMeshProUGUI phoneNumber;
@@ -15,8 +16,9 @@ public class UiCell : MonoBehaviour , IDeselectHandler
     private Button m_Button;
     [HideInInspector] public MainMenuController controller;
 
-    public void Initialize(string id, string clientName, string phoneNumber, string address, string email, string nif, MainMenuController controller)
+    public void Initialize(CellInfo info, string id, string clientName, string phoneNumber, string address, string email, string nif, MainMenuController controller)
     {
+        this.info = info;
         this.id.text = id;
         this.clientName.text = clientName;
         this.phoneNumber.text = phoneNumber;
@@ -39,6 +41,6 @@ public class UiCell : MonoBehaviour , IDeselectHandler
 
     public void OnDeselect(BaseEventData eventData)
     {
-        controller.SelectedCell = null;
+        //controller.SelectedCell = null;
     }
 }

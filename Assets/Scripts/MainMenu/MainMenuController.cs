@@ -41,8 +41,10 @@ public class MainMenuController : MonoBehaviour
         }
     }
     public Order CategoryOrder;
+    public Button addButton;
     public Button editButton;
     public Button deleteButton;
+    public ClientInfoPanel clientInfoPanel;
     public List<CategoryButton> categoryButtons;
 
     [Header("Prefabs")]
@@ -61,19 +63,33 @@ public class MainMenuController : MonoBehaviour
         // Get cell prefab
         m_CellPrefab = Resources.Load<UiCell>("Prefabs/UI/Cell");
 
+        // Setup buttons Bheaviours
+        addButton.onClick.AddListener(AddButtonBehaviour);
+        editButton.onClick.AddListener(EditButtonBehaviour);
+        deleteButton.onClick.AddListener(DeleteButtonBehaviour);
+
         // Initialize test data
         m_Info.Add(new CellInfo("000001", "Lucas", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "260080217", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
         m_Info.Add(new CellInfo("000002", "Ana", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "260080217", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
         m_Info.Add(new CellInfo("000003", "Joana", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "260080217", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
         m_Info.Add(new CellInfo("000004", "Renato", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "260080217", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
         m_Info.Add(new CellInfo("000005", "Paulo", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "260080217", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
+    }
 
+    private void Start()
+    {
         // Set buttons non-interactable at the start
         editButton.interactable = false;
         deleteButton.interactable = false;
 
         // Set default order and category
         categoryButtons[0].CellsOrder = Order.Ascending;
+    }
+
+    private void Update()
+    {
+        // Set cell settings - // needed so cell adjusts size when changing window size
+        gridLayoutGroup.cellSize = new Vector2(Screen.width * 1.5f, 50f);
     }
 
     public void InstantiateGrid(CellCategory category, Order order)
@@ -85,8 +101,7 @@ public class MainMenuController : MonoBehaviour
         if (m_Info.Count == 0)
             return;
 
-        // Set cell settings
-        gridLayoutGroup.cellSize = new Vector2(Screen.width, 50f);
+        
 
         // Get Info in order
         var infoInOrder = m_Info.ToArray();
@@ -131,12 +146,13 @@ public class MainMenuController : MonoBehaviour
         {
             var info = infoInOrder[i];
             var cell = Instantiate(m_CellPrefab, cellsParent);
-            cell.Initialize(info.id, info.clientName, info.phoneNumber,info.address, info.email, info.nif, this);
+            cell.Initialize(info, info.id, info.clientName, info.phoneNumber,info.address, info.email, info.nif, this);
             cell.name = info.id;
 
             m_Cells.Add(cell);
         }
     }
+
     private void ClearGrid()
     {
         foreach (var item in m_Cells)
@@ -146,4 +162,23 @@ public class MainMenuController : MonoBehaviour
 
         m_Cells = new List<UiCell>();
     }
+
+    private void AddButtonBehaviour()
+    {
+        clientInfoPanel.gameObject.SetActive(true);
+        clientInfoPanel.ClearInfo();
+        clientInfoPanel.Function = InfoPanelFuncion.Add;
+    }
+
+    private void EditButtonBehaviour()
+    {
+        clientInfoPanel.gameObject.SetActive(true);
+        clientInfoPanel.SetInfo(SelectedCell.info);
+        clientInfoPanel.Function = InfoPanelFuncion.Edit;
+    }
+    private void DeleteButtonBehaviour()
+    {
+        Debug.Log("Funcion not implemented yet");
+    }
+
 }
