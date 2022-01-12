@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -41,6 +42,13 @@ public class UiCell : MonoBehaviour , IDeselectHandler
 
     public void OnDeselect(BaseEventData eventData)
     {
-        //controller.SelectedCell = null;
+        //StartCoroutine(DesectOnNextFrame());
     }
+
+    //private IEnumerator DesectOnNextFrame()
+    //{
+    //    yield return new WaitForSeconds(0.5f);
+    //    controller.SelectedCell = null;
+    //
+    //}
 }

@@ -52,6 +52,7 @@ public class MainMenuController : MonoBehaviour
 
     [Header("Grid Elements")]
     public Transform cellsParent;
+    public Transform gridWindow;
     public GridLayoutGroup gridLayoutGroup;
 
     [Header("Grid Cells")]
@@ -86,22 +87,23 @@ public class MainMenuController : MonoBehaviour
         categoryButtons[0].CellsOrder = Order.Ascending;
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         // Set cell settings - // needed so cell adjusts size when changing window size
-        gridLayoutGroup.cellSize = new Vector2(Screen.width * 1.5f, 50f);
+        gridLayoutGroup.cellSize = new Vector2(gridWindow.GetComponent<RectTransform>().rect.width, 50f);
     }
 
     public void InstantiateGrid(CellCategory category, Order order)
     {
+        // Clear Selected Cell
+        SelectedCell = null;
+
         // Start with a blank grid
         ClearGrid();
 
         // No info to initialize
         if (m_Info.Count == 0)
             return;
-
-        
 
         // Get Info in order
         var infoInOrder = m_Info.ToArray();
@@ -153,6 +155,16 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
+    public void AddInfo(CellInfo info)
+    {
+        m_Info.Add(info);
+        InstantiateGrid(SelectedCategory, CategoryOrder);
+    }
+
+    public void ClearSelectedCell()
+    {
+        SelectedCell = null;
+    }
     private void ClearGrid()
     {
         foreach (var item in m_Cells)
@@ -169,7 +181,6 @@ public class MainMenuController : MonoBehaviour
         clientInfoPanel.ClearInfo();
         clientInfoPanel.Function = InfoPanelFuncion.Add;
     }
-
     private void EditButtonBehaviour()
     {
         clientInfoPanel.gameObject.SetActive(true);

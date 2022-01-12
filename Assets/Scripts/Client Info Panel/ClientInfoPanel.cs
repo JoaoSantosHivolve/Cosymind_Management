@@ -26,14 +26,23 @@ public class ClientInfoPanel : MonoBehaviour
 
     public TMP_InputField idInput;
     public TMP_InputField nameInput;
+    public TMP_InputField phoneNumberInput;
     public TMP_InputField addressInput;
     public TMP_InputField emailInput;
     public TMP_InputField nifInput;
     public TMP_InputField observationsInput;
-
+    public MainMenuController mainMenuController;
     public Button cancelButton;
     public Button printButton;
     public Button confirmButton;
+
+    private CellInfo CurrentInfo
+    {
+        get 
+        {
+            return new CellInfo(idInput.text, nameInput.text, phoneNumberInput.text,addressInput.text, emailInput.text, nifInput.text, observationsInput.text); 
+        }
+    }
 
     private void Awake()
     {
@@ -50,11 +59,11 @@ public class ClientInfoPanel : MonoBehaviour
     {
         idInput.text = info.id;
         nameInput.text = info.clientName;
+        phoneNumberInput.text = info.phoneNumber;
         addressInput.text = info.address;
         emailInput.text = info.email;
         nifInput.text = info.nif;
         observationsInput.text = info.observations;
-
     }
     public void ClearInfo()
     {
@@ -68,18 +77,22 @@ public class ClientInfoPanel : MonoBehaviour
     private void CancelButtonBehaviour()
     {
         gameObject.SetActive(false);
+        mainMenuController.ClearSelectedCell();
     }
     private void PrintButtonBehaviour()
     {
         gameObject.SetActive(false);
+        mainMenuController.ClearSelectedCell();
     }
     private void ConfirmButtonBehaviour()
     {
         gameObject.SetActive(false);
+        mainMenuController.ClearSelectedCell();
 
         switch (Function)
         {
             case InfoPanelFuncion.Add:
+                mainMenuController.AddInfo(CurrentInfo);
                 break;
             case InfoPanelFuncion.Edit:
                 break;
