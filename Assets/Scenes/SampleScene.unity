@@ -5612,6 +5612,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25e96774240da5540b7b82b3eb0d0db1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SelectedCell: {fileID: 0}
+  m_SelectedCategory: 0
+  CategoryOrder: 0
+  editButton: {fileID: 2090473626}
+  deleteButton: {fileID: 976174045}
+  categoryButtons:
+  - {fileID: 1417906802}
+  - {fileID: 528019028}
+  - {fileID: 552443712}
+  - {fileID: 1163053907}
+  - {fileID: 613668521}
+  - {fileID: 338575718}
   m_CellPrefab: {fileID: 0}
   cellsParent: {fileID: 104710504}
   gridLayoutGroup: {fileID: 104710505}

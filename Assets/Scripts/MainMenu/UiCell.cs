@@ -1,8 +1,9 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UiCell : MonoBehaviour
+public class UiCell : MonoBehaviour , IDeselectHandler
 {
     public TextMeshProUGUI id;
     public TextMeshProUGUI clientName;
@@ -14,7 +15,7 @@ public class UiCell : MonoBehaviour
     private Button m_Button;
     [HideInInspector] public MainMenuController controller;
 
-    public void Initialize(string id, string clientName, string phoneNumber, string address, string email, string nif)
+    public void Initialize(string id, string clientName, string phoneNumber, string address, string email, string nif, MainMenuController controller)
     {
         this.id.text = id;
         this.clientName.text = clientName;
@@ -22,16 +23,22 @@ public class UiCell : MonoBehaviour
         this.address.text = address;
         this.email.text = email;
         this.nif.text = nif;
+        this.controller = controller;
     }
 
     private void Awake()
     {
-        m_Button = transform.GetChild(0).GetComponent<Button>();
+        m_Button = GetComponent<Button>();
         m_Button.onClick.AddListener(OnClick);
     }
 
     private void OnClick()
     {
-        controller.selectedCell = this;
+        controller.SelectedCell = this;
+    }
+
+    public void OnDeselect(BaseEventData eventData)
+    {
+        controller.SelectedCell = null;
     }
 }

@@ -21,7 +21,7 @@ public enum Order
     Descending
 }
 
-public class CategoryButton : MonoBehaviour, IDeselectHandler, IPointerClickHandler
+public class CategoryButton : MonoBehaviour, IPointerClickHandler
 {
     public CellCategory category;
     private Order m_CellsOrder;
@@ -51,9 +51,10 @@ public class CategoryButton : MonoBehaviour, IDeselectHandler, IPointerClickHand
             }
 
             // Change Grid order
-            if (m_CellsOrder != Order.None)
+            if(m_CellsOrder != Order.None)
             {
-                controller.InstantiateGrid(category, m_CellsOrder);
+                controller.CategoryOrder = m_CellsOrder;
+                controller.SelectedCategory = category;
             }
         }
     }
@@ -64,7 +65,7 @@ public class CategoryButton : MonoBehaviour, IDeselectHandler, IPointerClickHand
     private Color m_OriginalColor;
     private Sprite m_ArrowUpSprite, m_ArrowDownSprite;
 
-    private void Start()
+    private void Awake()
     {
         // Get icon image component
         m_ArrowIcon = transform.GetChild(1).GetComponent<Image>();
@@ -75,12 +76,6 @@ public class CategoryButton : MonoBehaviour, IDeselectHandler, IPointerClickHand
         // Get sprite data
         m_ArrowUpSprite = Resources.Load<Sprite>("Images/Icons/Arrow_Up");
         m_ArrowDownSprite = Resources.Load<Sprite>("Images/Icons/Arrow_Down");
-
-        // Set default order
-        if (category == CellCategory.Id)
-            CellsOrder = Order.Ascending;
-        else
-            CellsOrder = Order.None;
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -89,10 +84,5 @@ public class CategoryButton : MonoBehaviour, IDeselectHandler, IPointerClickHand
         if (CellsOrder == Order.None) CellsOrder = Order.Ascending;
         else if (CellsOrder == Order.Ascending) CellsOrder = Order.Descending;
         else if (CellsOrder == Order.Descending) CellsOrder = Order.Ascending;
-    }
-
-    public void OnDeselect(BaseEventData eventData)
-    {
-        CellsOrder = Order.None;
     }
 }

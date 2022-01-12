@@ -7,7 +7,43 @@ using UnityEngine.UI;
 public class MainMenuController : MonoBehaviour
 {
     [Header("Interaction Elements")]
-    public UiCell selectedCell;
+    [SerializeField] 
+    private UiCell m_SelectedCell;
+    public UiCell SelectedCell
+    {
+        get { return m_SelectedCell; }
+        set
+        {
+            m_SelectedCell = value;
+
+            editButton.interactable = value != null;
+            deleteButton.interactable = value != null;
+        }
+    }
+    [SerializeField] 
+    private CellCategory m_SelectedCategory;
+    public CellCategory SelectedCategory
+    {
+        get { return m_SelectedCategory; }
+        set
+        {
+            m_SelectedCategory = value;
+
+            // Instantiate grid with new category or new order
+            InstantiateGrid(m_SelectedCategory, CategoryOrder);
+
+            // Reset buttons that arent that category
+            foreach (var item in categoryButtons)
+            {
+                if (item.category != m_SelectedCategory)
+                    item.CellsOrder = Order.None;
+            }
+        }
+    }
+    public Order CategoryOrder;
+    public Button editButton;
+    public Button deleteButton;
+    public List<CategoryButton> categoryButtons;
 
     [Header("Prefabs")]
     [SerializeField] private UiCell m_CellPrefab;
@@ -31,6 +67,13 @@ public class MainMenuController : MonoBehaviour
         m_Info.Add(new CellInfo("000003", "Joana", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "260080217", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
         m_Info.Add(new CellInfo("000004", "Renato", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "260080217", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
         m_Info.Add(new CellInfo("000005", "Paulo", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "260080217", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
+
+        // Set buttons non-interactable at the start
+        editButton.interactable = false;
+        deleteButton.interactable = false;
+
+        // Set default order and category
+        categoryButtons[0].CellsOrder = Order.Ascending;
     }
 
     public void InstantiateGrid(CellCategory category, Order order)
@@ -88,7 +131,8 @@ public class MainMenuController : MonoBehaviour
         {
             var info = infoInOrder[i];
             var cell = Instantiate(m_CellPrefab, cellsParent);
-            cell.Initialize(info.id, info.clientName, info.phoneNumber,info.address, info.email, info.nif);
+            cell.Initialize(info.id, info.clientName, info.phoneNumber,info.address, info.email, info.nif, this);
+            cell.name = info.id;
 
             m_Cells.Add(cell);
         }
