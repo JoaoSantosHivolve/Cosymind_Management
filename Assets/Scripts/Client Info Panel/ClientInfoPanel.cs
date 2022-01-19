@@ -20,7 +20,10 @@ public class ClientInfoPanel : MonoBehaviour
         { 
             m_Function = value;
 
+            // Change bottom button text
             confirmButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = value == InfoPanelFuncion.Add ? "Adicionar" : "Editar";
+            // Make id input non interactable if editing info
+            idInput.interactable = m_Function == InfoPanelFuncion.Add ? true : false;
         }
     }
 
@@ -95,6 +98,7 @@ public class ClientInfoPanel : MonoBehaviour
                 mainMenuController.AddInfo(CurrentInfo);
                 break;
             case InfoPanelFuncion.Edit:
+                mainMenuController.EditInfo(CurrentInfo);
                 break;
             default:
                 break;

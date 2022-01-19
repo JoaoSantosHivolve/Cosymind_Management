@@ -1,11 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour
 {
+    private UiCell m_CellPrefab;
+
     [Header("Interaction Elements")]
     [SerializeField] 
     private UiCell m_SelectedCell;
@@ -41,14 +44,14 @@ public class MainMenuController : MonoBehaviour
         }
     }
     public Order CategoryOrder;
+    public TMP_InputField searchBarInput;
+    public Button clearButton;
     public Button addButton;
     public Button editButton;
     public Button deleteButton;
     public ClientInfoPanel clientInfoPanel;
     public List<CategoryButton> categoryButtons;
 
-    [Header("Prefabs")]
-    [SerializeField] private UiCell m_CellPrefab;
 
     [Header("Grid Elements")]
     public Transform cellsParent;
@@ -58,23 +61,26 @@ public class MainMenuController : MonoBehaviour
     [Header("Grid Cells")]
     [SerializeField] private List<UiCell> m_Cells = new List<UiCell>();
     [SerializeField] private List<CellInfo> m_Info = new List<CellInfo>();
-
+    [SerializeField] private List<CellInfo> m_SelectedInfo = new List<CellInfo>();
     private void Awake()
     {
         // Get cell prefab
         m_CellPrefab = Resources.Load<UiCell>("Prefabs/UI/Cell");
 
         // Setup buttons Bheaviours
+        searchBarInput.onValueChanged.AddListener(delegate { SearchBarBehaviour(); });
+        clearButton.onClick.AddListener(ClearButtonBehaviour);
         addButton.onClick.AddListener(AddButtonBehaviour);
         editButton.onClick.AddListener(EditButtonBehaviour);
         deleteButton.onClick.AddListener(DeleteButtonBehaviour);
 
         // Initialize test data
-        m_Info.Add(new CellInfo("000001", "Lucas", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "260080217", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
-        m_Info.Add(new CellInfo("000002", "Ana", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "260080217", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
-        m_Info.Add(new CellInfo("000003", "Joana", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "260080217", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
-        m_Info.Add(new CellInfo("000004", "Renato", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "260080217", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
-        m_Info.Add(new CellInfo("000005", "Paulo", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "260080217", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
+        m_Info.Add(new CellInfo("000001", "Lucas", "967434301", "Estrada Nacional 13", "joaosantosprofi@gmail.com", "251346798", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
+        m_Info.Add(new CellInfo("000002", "Ana", "967564661", "Estrada Nacional 13", "qweasdqwe@gmail.com", "251346479", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
+        m_Info.Add(new CellInfo("000003", "Joana", "968467315", "Estrada Nacional 13", "qwezxaqeqwe@gmail.com", "248613457", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
+        m_Info.Add(new CellInfo("000004", "Renato", "969764513", "Estrada Nacional 13", "qweadqweaazxc@gmail.com", "251346798", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
+        m_Info.Add(new CellInfo("000005", "Paulo", "965421678", "Estrada Nacional 13", "123asd123asd@gmail.com", "221345768", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"));
+        m_SelectedInfo = m_Info;
     }
 
     private void Start()
@@ -106,7 +112,7 @@ public class MainMenuController : MonoBehaviour
             return;
 
         // Get Info in order
-        var infoInOrder = m_Info.ToArray();
+        var infoInOrder = m_SelectedInfo.ToArray();
         switch (category)
         {
             case CellCategory.Id:
@@ -160,6 +166,65 @@ public class MainMenuController : MonoBehaviour
         m_Info.Add(info);
         InstantiateGrid(SelectedCategory, CategoryOrder);
     }
+    public void EditInfo(CellInfo info)
+    {
+        foreach (var item in m_Info)
+        {
+            if(item.id == info.id)
+            {
+                item.clientName = info.clientName;
+                item.phoneNumber = info.phoneNumber;
+                item.address = info.address;
+                item.email = info.email;
+                item.nif = info.nif;
+                item.observations = info.observations;
+            }
+        }
+
+        InstantiateGrid(SelectedCategory, CategoryOrder);
+    }
+    public void DeleteInfo(CellInfo info)
+    {
+        CellInfo objectToDelete = null;
+
+        foreach (var item in m_Info)
+        {
+            if (item.id == info.id)
+            {
+                objectToDelete = item;
+            }
+        }
+        m_Info.Remove(objectToDelete);
+
+        InstantiateGrid(SelectedCategory, CategoryOrder);
+    }
+    public void ShowInfoBasedOnSearchBarInput(string input)
+    {
+        if(input == String.Empty)
+        {
+            m_SelectedInfo = m_Info;
+        }
+        else
+        {
+            m_SelectedInfo = new List<CellInfo>();
+
+            foreach (var item in m_Info)
+            {
+                if (item.id.Contains(input, StringComparison.OrdinalIgnoreCase)
+                    || item.clientName.Contains(input, StringComparison.OrdinalIgnoreCase)
+                    || item.phoneNumber.Contains(input, StringComparison.OrdinalIgnoreCase)
+                    || item.address.Contains(input, StringComparison.OrdinalIgnoreCase)
+                    || item.email.Contains(input, StringComparison.OrdinalIgnoreCase)
+                    || item.nif.Contains(input, StringComparison.OrdinalIgnoreCase))
+                {
+                    m_SelectedInfo.Add(item);
+                }
+            }
+        }
+
+        InstantiateGrid(SelectedCategory, CategoryOrder);
+    }
+
 
     public void ClearSelectedCell()
     {
@@ -175,6 +240,14 @@ public class MainMenuController : MonoBehaviour
         m_Cells = new List<UiCell>();
     }
 
+    private void SearchBarBehaviour()
+    {
+        ShowInfoBasedOnSearchBarInput(searchBarInput.text);
+    }
+    private void ClearButtonBehaviour()
+    {
+        searchBarInput.text = String.Empty;
+    }
     private void AddButtonBehaviour()
     {
         clientInfoPanel.gameObject.SetActive(true);
@@ -189,7 +262,15 @@ public class MainMenuController : MonoBehaviour
     }
     private void DeleteButtonBehaviour()
     {
-        Debug.Log("Funcion not implemented yet");
+        DeleteInfo(SelectedCell.info);
     }
+   
+}
 
+public static class StringExtensions
+{
+    public static bool Contains(this string source, string toCheck, StringComparison comp)
+    {
+        return source?.IndexOf(toCheck, comp) >= 0;
+    }
 }
